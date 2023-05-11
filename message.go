@@ -128,7 +128,14 @@ func (m *Message) GetFields() map[int]field.Field {
 
 func (m *Message) Pack() ([]byte, error) {
 	packed := []byte{}
+	// allow to preserve the bitmap1 settings as this is used as secondary field existance.
+	bitmap_1 := m.Bitmap().IsSet(bitmapIdx)
+
 	m.Bitmap().Reset()
+
+	if bitmap_1 {
+		m.Bitmap().Set(bitmapIdx)
+	}
 
 	ids, err := m.packableFieldIDs()
 	if err != nil {
